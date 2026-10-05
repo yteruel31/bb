@@ -52,6 +52,7 @@ interface MessageActionBarProps {
     text: string,
     attachments?: readonly PromptDraftAttachment[],
   ) => void;
+  onCopyLink?: () => void;
   onEdit?: () => void;
   onFork?: () => void;
   onSendToMain?: () => void;
@@ -60,7 +61,13 @@ interface MessageActionBarProps {
 }
 
 interface MessageOverflowAction {
-  icon: "Copy" | "Edit" | "MessageSquarePlus" | "Fork" | "ArrowTurnBackward";
+  icon:
+    | "Copy"
+    | "Link"
+    | "Edit"
+    | "MessageSquarePlus"
+    | "Fork"
+    | "ArrowTurnBackward";
   plugin?: { pluginId: string | null; icon: string | null };
   key?: string;
   label: string;
@@ -294,7 +301,7 @@ function MessageTimestampFooter({ timestamp }: { timestamp: number }) {
   });
   return (
     <div
-      className="-mx-1 -mb-1 mt-1 border-t border-border bg-surface-recessed px-3 py-3 text-xs text-muted-foreground max-md:-mx-2 max-md:-mb-2 max-md:px-4"
+      className="mt-1 border-t border-border px-2 pt-2 pb-1 text-xs text-subtle-foreground"
       data-message-metadata=""
     >
       <time dateTime={date.toISOString()} title={fullDate}>
@@ -312,6 +319,7 @@ export function MessageActionBar({
   addToChatAttachments = [],
   copyImageUrl,
   onAddToChat,
+  onCopyLink,
   onEdit,
   onFork,
   onSendToMain,
@@ -427,6 +435,15 @@ export function MessageActionBar({
       ? 0
       : layout.inlineCount;
   const menuActions = [
+    ...(onCopyLink
+      ? [
+          {
+            icon: "Link" as const,
+            label: "Copy link",
+            onSelect: onCopyLink,
+          },
+        ]
+      : []),
     ...inlineCandidates.slice(isCompactViewport ? 0 : inlineCount),
     ...trailingMenuActions,
   ];
